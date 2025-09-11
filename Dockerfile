@@ -3,5 +3,5 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-EXPOSE 5000   # Exposing all application services to default Docker network (potentially all containers)
+EXPOSE 5000  
 CMD ["python", "app.py"]
