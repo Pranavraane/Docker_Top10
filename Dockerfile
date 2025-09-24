@@ -6,6 +6,7 @@ WORKDIR /app
 # Copy requirements.txt and install dependencies (as root)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install jinja2==3.0.3
 
 # Copy the rest of your app's code (as root)
 COPY . .
