@@ -2,6 +2,8 @@ FROM python:3.11-slim
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install jinja2==3.0.3
+
 COPY . .
 # Running as root user (default) - insecure practice
 # No creation or use of a non-root user
