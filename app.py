@@ -1,22 +1,14 @@
-from flask import Flask, request, render_template_string
+from flask import Flask, request
+import subprocess
 
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return '''
-    <form action="/greet" method="post">
-        <input name="name" placeholder="Enter your name">
-        <input type="submit">
-    </form>
-    '''
-
-# Vulnerable SSTI endpoint
-@app.route('/greet', methods=['POST'])
-def greet():
-    name = request.form.get('name', '')
-    # Dangerous: rendering untrusted input directly as template
-    return render_template_string(f'Hello, {name}!')
+@app.route('/run_command', methods=['POST'])
+def run_command():
+    cmd = request.form.get('cmd', '')
+    # WARNING: Unsafe eval of user input -- rce vulnerability
+    output = subprocess.getoutput(cmd)
+    return f"<pre>{output}</pre>"
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host="0.0.0.0", port=5000)
