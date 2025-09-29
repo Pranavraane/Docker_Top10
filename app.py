@@ -1,14 +1,22 @@
-from flask import Flask, request, render_template_string, render_template
+from flask import Flask, request, render_template_string
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    name = request.args.get("name", "User")
-    template = f"Hello {name}!"
-    return render_template_string(template)
-    #patch: remove above 2 lines and add below one line, index.html file is recommented
-    #return render_template("index.html", name=name)
+    return '''
+    <form action="/greet" method="post">
+        <input name="name" placeholder="Enter your name">
+        <input type="submit">
+    </form>
+    '''
 
-if __name__ == "__main__":
+# Vulnerable SSTI endpoint
+@app.route('/greet', methods=['POST'])
+def greet():
+    name = request.form.get('name', '')
+    # Dangerous: rendering untrusted input directly as template
+    return render_template_string(f'Hello, {name}!')
+
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
