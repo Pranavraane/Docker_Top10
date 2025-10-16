@@ -3,17 +3,13 @@ FROM python:3.11-slim
 WORKDIR /app
 
 COPY requirements.txt .
-
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install jinja2==3.0.3
-
+RUN pip install jinja2==3.0.3 flask
 
 COPY . .
 
-# Running as root user (default) - violating security context best practices
-# No user restrictions or dropping of capabilities
-
-EXPOSE 5000    # No network or port restriction
+# Runs as root - insecure (violates D05)
+# No user restrictions, no dropped Linux capabilities
+EXPOSE 5000
 
 CMD ["python", "app.py"]
-
