@@ -1,14 +1,16 @@
-from flask import Flask, request
-import subprocess
+from flask import Flask, jsonify
+import os
 
 app = Flask(__name__)
 
-@app.route('/run_command', methods=['POST'])
-def run_command():
-    cmd = request.form.get('cmd', '')
-    # WARNING: Unsafe eval of user input -- rce vulnerability
-    output = subprocess.getoutput(cmd)
-    return f"<pre>{output}</pre>"
+@app.route('/')
+def index():
+    return "<h2>D06 Vulnerable App - Secret Leak</h2>Visit /secret to get secret."
+
+@app.route('/secret')
+def secret():
+    secret_key = os.getenv('SECRET_KEY')
+    return jsonify({"secret": secret_key})
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host='0.0.0.0', port=5000)
