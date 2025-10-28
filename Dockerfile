@@ -1,18 +1,13 @@
-FROM python:3.11-slim
+FROM ubuntu:latest
 
-# Set working directory inside the container
 WORKDIR /app
 
-# Copy requirements.txt and install dependencies (as root)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && apt-get install -y python3 python3-pip
 
+COPY app.py /app/app.py
 
-# Copy the rest of your app's code (as root)
-COPY . .
+RUN pip3 install flask
 
-# Expose port 5000 for Flask
 EXPOSE 5000
 
-# Run the Flask app with host=0.0.0.0 to be accessible outside the container (as root)
-CMD ["python", "app.py"]
+CMD ["python3", "app.py"]
