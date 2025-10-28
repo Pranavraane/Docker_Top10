@@ -1,14 +1,12 @@
-from flask import Flask, request
-import subprocess
+from flask import Flask
+import os
 
 app = Flask(__name__)
 
-@app.route('/run_command', methods=['POST'])
-def run_command():
-    cmd = request.form.get('cmd', '')
-    # WARNING: Unsafe eval of user input -- rce vulnerability
-    output = subprocess.getoutput(cmd)
-    return f"<pre>{output}</pre>"
+@app.route('/')
+def info():
+    # Exposes environment variables publicly, potentially leaking secrets
+    return "Environment variables: " + str(dict(os.environ))
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host='0.0.0.0', port=5000)
