@@ -1,14 +1,11 @@
-from flask import Flask, request
-import subprocess
+import os
 
-app = Flask(__name__)
+def main():
+    # Vulnerable: writes to file in mutable volume or filesystem
+    with open("data/exploit.txt", "w") as f:
+        f.write("This should not be allowed in immutable container!")
 
-@app.route('/run_command', methods=['POST'])
-def run_command():
-    cmd = request.form.get('cmd', '')
-    # WARNING: Unsafe eval of user input -- rce vulnerability
-    output = subprocess.getoutput(cmd)
-    return f"<pre>{output}</pre>"
+    print("File written to data/exploit.txt")
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+if __name__ == "__main__":
+    main()
