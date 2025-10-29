@@ -1,11 +1,20 @@
-import os
+import http.server
+import socketserver
 
-def main():
-    # Vulnerable: writes to file in mutable volume or filesystem
-    with open("data/exploit.txt", "w") as f:
-        f.write("This should not be allowed in immutable container!")
+PORT = 8000
 
-    print("File written to data/exploit.txt")
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def do_POST(self):
+        # Vulnerable: allows writing data sent by attacker to the container's filesystem
+        length = int(self.headers['Content-Length'])
+        data = self.rfile.read(length).decode('utf-8')
+        with open('data/owned.txt', 'w') as f:
+            f.write(data)
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b'Success')
 
 if __name__ == "__main__":
-    main()
+    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        print("Serving on port", PORT)
+        httpd.serve_forever()
