@@ -1,18 +1,12 @@
-FROM python:3.11-slim
+FROM python:3.10-slim
 
-# Set working directory inside the container
 WORKDIR /app
 
-# Copy requirements.txt and install dependencies (as root)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY app.py .
 
+RUN pip install flask
 
-# Copy the rest of your app's code (as root)
-COPY . .
+RUN mkdir /var/log/myapp
+RUN chmod 777 /var/log/myapp
 
-# Expose port 5000 for Flask
-EXPOSE 5000
-
-# Run the Flask app with host=0.0.0.0 to be accessible outside the container (as root)
 CMD ["python", "app.py"]
